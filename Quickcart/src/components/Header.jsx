@@ -1,19 +1,8 @@
-import "../styles/Header.css";
+import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext'; // ← Add import
 
-function Header({ cartCount, onCartClick }) {
-
-  return (
-    <header className="header">
-
-      <h1>QuickCart</h1>
-
-      <div className="cart-icon" onClick={onCartClick}>
-        🛒
-        <span className="badge">{cartCount}</span>
-      </div>
-
-    </header>
-  );
+function Header({ searchTerm, onSearchChange }) {
+  const { getTotalItems, toggleCart } = useCart(); // ← Use context
+  
+  // ... rest of component uses getTotalItems() and toggleCart
 }
-
-export default Header;

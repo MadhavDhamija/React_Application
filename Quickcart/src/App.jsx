@@ -1,68 +1,45 @@
-import { useState } from "react";
-import Header from "./components/Header";
-import ProductList from "./components/ProductList";
-import CartSidebar from "./components/CartSidebar";
-// import "./styles/App.css";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
+import Header from './components/Header';
+import HomePage from './components/HomePage';
+import CategoryPage from './components/CategoryPage';
+import CartPage from './components/CartPage';
+import CartSidebar from './components/CartSidebar';
+import { products } from './data/products';
+import './styles/App.css';
 
 function App() {
-
-  const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
-  // Add product to cart
-  const addToCart = (product) => {
-
-    const existingItem = cart.find(item => item.id === product.id);
-
-    if (existingItem) {
-      const updatedCart = cart.map(item =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      );
-
-      setCart(updatedCart);
-    } else {
-      setCart([...cart, { ...product, quantity: 1 }]);
-    }
-  };
-
-  // Update quantity
-  const updateQuantity = (id, amount) => {
-
-    const updatedCart = cart
-      .map(item =>
-        item.id === id
-          ? { ...item, quantity: item.quantity + amount }
-          : item
-      )
-      .filter(item => item.quantity > 0);
-
-    setCart(updatedCart);
-  };
-
-  // Remove item
-  const removeItem = (id) => {
-    setCart(cart.filter(item => item.id !== id));
-  };
-
-  // Total items count
-  const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
-
+  // Remove all cart state - now in Context!
+  const [searchTerm, setSearchTerm] = useState('');
+  
   return (
-    <>
-     <Header cartCount={cartItemCount} onCartClick={() => setIsCartOpen(true)} />
-
-      <ProductList addToCart={addToCart} />
-
-      <CartSidebar
-        isOpen={isCartOpen}
-        cart={cart}
-        onClose={() => setIsCartOpen(false)}
-        onUpdateQuantity={updateQuantity}
-        onRemoveItem={removeItem}
-      />
-    </>
+    <BrowserRouter>
+      <div className="app">
+        <Header 
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+        />
+        
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={
+              <HomePage 
+                products={products}
+                searchTerm={searchTerm}
+              />
+            } />
+            
+            <Route path="/category/:category" element={
+              <CategoryPage products={products} />
+            } />
+            
+            <Route path="/cart" element={<CartPage />} />
+          </Routes>
+        </main>
+        
+        <CartSidebar />
+      </div>
+    </BrowserRouter>
   );
 }
 
